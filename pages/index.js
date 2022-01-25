@@ -76,17 +76,17 @@ function Titulo(props){
     .then(response => response.json())
     .then(data => {
         var nome = document.getElementById("nomePerfil")
-        nome.innerText = data.name
+        nome.innerText = username.length>2? data.name : ' Nome '
         var empresa = document.getElementById("Empresa")
-        empresa.innerText = data.company
-        var email = document.getElementById("Email")
-        email.innerText = data.email
+        empresa.innerText = username.length>2? data.company : ' Empresa '
+        var email =  document.getElementById("Email")
+        email.innerText = username.length>2?data.email : ' Email '
         var localizacao = document.getElementById("Localizacao")
-        localizacao.innerText = data.location
+        localizacao.innerText = username.length>2? data.location : ' Localizacao '
         var seguidores = document.getElementById("Seguidores")
-        seguidores.innerText = data.followers
+        seguidores.innerText = username.length>2? data.followers: ' Seguidores '
         var seguindo = document.getElementById("Seguindo")
-        seguindo.innerText = data.following
+        seguindo.innerText = username.length>2? data.following : ' Seguindo '
     })
     .catch(error => console.log(error));
 
@@ -204,43 +204,47 @@ function Titulo(props){
                   borderRadius: '1000px'
                 }}
               >
-                {username}
+                {username.length > 2 ? username : 'Raposa'}
               </Text>
             </Box>
             {/* Photo Area */}
           </Box>
-          <Box
-          styleSheet={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                maxWidth: '200px',
-                padding: '16px',
-                backgroundColor: appConfig.theme.colors.neutrals[333],
-                border: '1px solid',
-                borderColor: appConfig.theme.colors.neutrals['000'],
-                borderRadius: '10px',
-                flex: 1,
-                minHeight: '220px',
-                opacity : 0.8
-              }}
-              >
-              <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals['000'] }}>
-                <h4 >Nome: </h4>
-                <p id="nomePerfil"></p>
-                <h4>Empresa: </h4> 
-                <p id="Empresa"></p>
-                <h4>Email: </h4> 
-                <p id="Email"></p>
-                <h4>Localização: </h4> 
-                <p id="Localizacao"></p>
-                <h4>Seguidores: </h4> 
-                <p id="Seguidores"></p>
-                <h4>Seguindo: </h4> 
-                <p id="Seguindo"></p>
-              </Text>
+        
+            <Box
+            styleSheet={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  maxWidth: '200px',
+                  padding: '16px',
+                  backgroundColor: appConfig.theme.colors.neutrals[333],
+                  border: '1px solid',
+                  borderColor: appConfig.theme.colors.neutrals['000'],
+                  borderRadius: '10px',
+                  flex: 1,
+                  minHeight: '220px',
+                  opacity : 0.8
+                }}
+                >
+                <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals['000'] }}>
+                  <h4 >Nome: </h4>
+                  <p id="nomePerfil"></p>
+                  <h4>Empresa: </h4> 
+                  <p id="Empresa"></p>
+                  <h4>Email: </h4> 
+                  <p id="Email"></p>
+                  <h4>Localização: </h4> 
+                  <p id="Localizacao"></p>
+                  <h4>Seguidores: </h4> 
+                  <p id="Seguidores"></p>
+                  <h4>Seguindo: </h4> 
+                  <p id="Seguindo"></p>
+                </Text>
+                
+            </Box>
+          
               
-          </Box>
+          
         </Box>
       </>
     );
