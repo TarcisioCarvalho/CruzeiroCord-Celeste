@@ -52,11 +52,45 @@ function Titulo(props){
 
   export default function PaginaInicial() {
     //const username = 'TarcisioCarvalho';
+    let dados
     const [username,setUsername] = React.useState('TarcisioCarvalho');
     const roteamento = useRouter();
+    const url = `https://api.github.com/users/${username}`
+   // const [ userBio, setUserBio ] = useState('');
+    //const[userEmail,setUserEmail] = React.useState('');
     const image = "https://i.pinimg.com/originals/22/37/26/2237261b1780cf8468495645e087b422.jpg";
     //<div style="width:100%;height:0;padding-bottom:56%;position:relative;"><iframe src="https://giphy.com/embed/3ohjV0xTr6aUO4vjMc" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/cruzeiro-raposa-raposao-3ohjV0xTr6aUO4vjMc">via GIPHY</a></p>
+    //fetch(`api.github.com/users/${username}`)
+    //.then(function (respostaDoServidor){return respostaDoServidor.json()})
+    //.then(function (respostaConvertida) { setUserEmail(respostaConvertida.email ) })
 
+
+   /* fetch(userURL)
+    .then(response => response.json())
+    .then(data => {
+      setUserBio(data.bio)
+      setUserCompany(data.company)
+    })*/
+
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        var nome = document.getElementById("nomePerfil")
+        nome.innerText = data.name
+        var empresa = document.getElementById("Empresa")
+        empresa.innerText = data.company
+        var email = document.getElementById("Email")
+        email.innerText = data.email
+        var localizacao = document.getElementById("Localizacao")
+        localizacao.innerText = data.location
+        var seguidores = document.getElementById("Seguidores")
+        seguidores.innerText = data.followers
+        var seguindo = document.getElementById("Seguindo")
+        seguindo.innerText = data.following
+    })
+    .catch(error => console.log(error));
+
+    
     return (
       <>
         
@@ -97,7 +131,7 @@ function Titulo(props){
                 width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
               }}
             >
-              <Titulo tag="h2">Boas vindas de volta!</Titulo>
+              <Titulo tag="h2">CruzeiroCord!</Titulo>
               <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals['000'] }}>
                 {appConfig.name}
               </Text>
@@ -174,6 +208,38 @@ function Titulo(props){
               </Text>
             </Box>
             {/* Photo Area */}
+          </Box>
+          <Box
+          styleSheet={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                maxWidth: '200px',
+                padding: '16px',
+                backgroundColor: appConfig.theme.colors.neutrals[333],
+                border: '1px solid',
+                borderColor: appConfig.theme.colors.neutrals['000'],
+                borderRadius: '10px',
+                flex: 1,
+                minHeight: '220px',
+                opacity : 0.8
+              }}
+              >
+              <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals['000'] }}>
+                <h4 >Nome: </h4>
+                <p id="nomePerfil"></p>
+                <h4>Empresa: </h4> 
+                <p id="Empresa"></p>
+                <h4>Email: </h4> 
+                <p id="Email"></p>
+                <h4>Localização: </h4> 
+                <p id="Localizacao"></p>
+                <h4>Seguidores: </h4> 
+                <p id="Seguidores"></p>
+                <h4>Seguindo: </h4> 
+                <p id="Seguindo"></p>
+              </Text>
+              
           </Box>
         </Box>
       </>

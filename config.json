@@ -1,5 +1,5 @@
 {
-    "name": "CruzeiroCord- Celeste (TarcisioCarvalho)",
+    "name": "CruzeiroCord - Celeste By(TarcisioCarvalho)",
     "theme": {
       "colors": {
         "primary": {
@@ -15,6 +15,7 @@
           "800": "#0E5814",
           "900": "#05400A",
           "333": "#191970"
+          
         },
         "neutrals": {
           "000": "#FFFFFF",
@@ -29,7 +30,8 @@
           "800": "#181F25",
           "900": "#101418",
           "999": "#080A0C",
-          "333": "#0000ff"
+          "333": "#0000ff",
+          "222": "#daa520"
         }
       }
     },
