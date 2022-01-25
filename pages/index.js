@@ -54,6 +54,8 @@ function Titulo(props){
     //const username = 'TarcisioCarvalho';
     const [username,setUsername] = React.useState('TarcisioCarvalho');
     const roteamento = useRouter();
+    const image = "https://i.pinimg.com/originals/22/37/26/2237261b1780cf8468495645e087b422.jpg";
+    //<div style="width:100%;height:0;padding-bottom:56%;position:relative;"><iframe src="https://giphy.com/embed/3ohjV0xTr6aUO4vjMc" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/cruzeiro-raposa-raposao-3ohjV0xTr6aUO4vjMc">via GIPHY</a></p>
 
     return (
       <>
@@ -104,8 +106,12 @@ function Titulo(props){
                 value={username}
                 onChange={function event(event){
                   const valor = event.target.value
-                  setUsername(valor)
+            
+                    setUsername(valor)
+                 
+                  
                 }}
+                placeholder="Digite seu usuário"
                 fullWidth
                 textFieldColors={{
                   neutral: {
@@ -152,7 +158,8 @@ function Titulo(props){
                   borderRadius: '50%',
                   marginBottom: '16px',
                 }}
-                src={`https://github.com/${username}.png`}
+               
+                src={username.length > 2 ? `https://github.com/${username}.png`: image}
               />
               <Text
                 variant="body4"
