@@ -3,7 +3,13 @@ import React from 'react';
 import {useRouter} from 'next/router'
 import appConfig from '../config.json';
 
+import { createClient } from '@supabase/supabase-js'
+//CruzeiroCord!Celeste
 
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI5MTM0MywiZXhwIjoxOTU4ODY3MzQzfQ.vXXUcQLCvv82wcsBwl0wezaJC3phiKIM4pQDSYfofEQ'
+const SUPABASE_URL = 'https://kbufjlbqkvpemmumvtwh.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 
 
