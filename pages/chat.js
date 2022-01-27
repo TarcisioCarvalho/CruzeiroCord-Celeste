@@ -11,8 +11,14 @@
 
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import PaginaInicial from './index';
 import appConfig from '../config.json';
+
+
+
+
 
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI5MTM0MywiZXhwIjoxOTU4ODY3MzQzfQ.vXXUcQLCvv82wcsBwl0wezaJC3phiKIM4pQDSYfofEQ'
@@ -24,6 +30,12 @@ export default function ChatPage() {
 
     const [mensagem,setMensagem] = React.useState('');
     const [listaMensagens,setListaMensagens] = React.useState([])
+    const [isLoaded, setIsLoaded] = useState(false)
+   
+
+    const router = useRouter();
+    const { username } = router.query;
+
 
     React.useEffect( ()=>{
         supabaseClient
@@ -32,14 +44,19 @@ export default function ChatPage() {
         .order('id', {ascending: false})
         .then(({data})=>{
             setListaMensagens(data);
+            setIsLoaded(true)
         })
     })
 
     function handleNovaMensagem(novaMensagem){
+
+        if(!novaMensagem) return
+        if(novaMensagem.trim() === '') return
+
         const mensagem ={
             //id: listaMensagens.length,
-            de: 'TarcisioCarvalho',
-            texto: novaMensagem
+            de: username,
+            texto: novaMensagem.trim()
         }
 
         supabaseClient
@@ -63,116 +80,162 @@ export default function ChatPage() {
 
     function handleDeletarMensagem(event) {
         const messageId = Number(event.target.dataset.id)
-        const messageListFiltered = listaMensagens.filter((messageFiltered) => {
-            return messageFiltered.id != messageId
+
+        supabaseClient
+        .from('Mensagens')
+        .delete()
+        .match({ id: messageId})
+        .then(({data})=>{
+            const messageListFiltered = listaMensagens.filter((messageFiltered) => {
+                return messageFiltered.id != data[0].id
         })
 
         setListaMensagens(messageListFiltered)
+        })
+
+        
+    }
+
+
+   
+
+    if (!isLoaded) {
+        return (
+            <>
+                <style global jsx>{`
+                    .loading-image {
+                        max-width: 200px;
+                        max-height: 200px;
+                        animation: rotation .5s linear infinite; 
+                    }
+                    @keyframes rotation {
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+                `}</style>
+
+                <Box
+                    styleSheet={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backgroundColor: 'rgba(0,0,0,0.6)',
+                        backgroundImage: 'url(https://i.pinimg.com/564x/6e/cc/e5/6ecce52666fa6b4f0e0a7bd1926c2744.jpg)',
+                        backgroundRepeat: 'repeat', backgroundSize: '10%', backgroundBlendMode: 'multiply',
+                        color: appConfig.theme.colors.neutrals['000']
+                    }}
+                >
+
+                    <img src="emblemacruzeiro.jpg" className='loading-image' />
+                </Box>
+            </>
+        )
     }
 
     // ./Sua lógica vai aqui
-    return (
-        <Box
-            styleSheet={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: appConfig.theme.colors.primary['000'],
-                backgroundImage: `url(https://i.pinimg.com/564x/6e/cc/e5/6ecce52666fa6b4f0e0a7bd1926c2744.jpg)`,
-                backgroundRepeat: 'repeat', backgroundSize: '10%', backgroundBlendMode: 'multiply',
-                color: appConfig.theme.colors.neutrals['000']
-            }}
-        >
+    if (isLoaded) {
+        return (
             <Box
                 styleSheet={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-                    borderRadius: '5px',
-                    backgroundColor: appConfig.theme.colors.neutrals[333],
-                    height: '100%',
-                    maxWidth: '95%',
-                    maxHeight: '95vh',
-                    padding: '32px',
-                    opacity: '0.9'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: appConfig.theme.colors.primary['000'],
+                    backgroundImage: `url(https://i.pinimg.com/564x/6e/cc/e5/6ecce52666fa6b4f0e0a7bd1926c2744.jpg)`,
+                    backgroundRepeat: 'repeat', backgroundSize: '10%', backgroundBlendMode: 'multiply',
+                    color: appConfig.theme.colors.neutrals['000']
                 }}
             >
-                <Header />
                 <Box
                     styleSheet={{
-                        position: 'relative',
                         display: 'flex',
-                        flex: 1,
-                        height: '80%',
-                        backgroundColor: appConfig.theme.colors.neutrals['000'],
                         flexDirection: 'column',
+                        flex: 1,
+                        boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
                         borderRadius: '5px',
-                        padding: '16px',
+                        backgroundColor: appConfig.theme.colors.neutrals[333],
+                        height: '100%',
+                        maxWidth: '95%',
+                        maxHeight: '95vh',
+                        padding: '32px',
+                        opacity: '0.9'
                     }}
                 >
-                   
-                        
-                 
-                     <MessageList mensagem={listaMensagens} handleDeletarMensagem={handleDeletarMensagem} /> 
-
+                    <Header />
                     <Box
-                        as="form"
                         styleSheet={{
+                            position: 'relative',
                             display: 'flex',
-                            alignItems: 'center',
+                            flex: 1,
+                            height: '80%',
+                            backgroundColor: appConfig.theme.colors.neutrals['000'],
+                            flexDirection: 'column',
+                            borderRadius: '5px',
+                            padding: '16px',
                         }}
                     >
-                        <TextField
-                            value={mensagem}
-                            onChange={(event) => {
-                                const valor = event.target.value;
-                                setMensagem(valor);
-                            }}
-                            onKeyPress={(event)=>{
-                                if(event.key === 'Enter'){
-                                    event.preventDefault();
-                                    handleNovaMensagem(mensagem)
-                                }
-                            }}
-                            placeholder="Insira sua mensagem aqui..."
-                            type="textarea"
+                       
+                            
+                     
+                         <MessageList mensagem={listaMensagens} handleDeletarMensagem={handleDeletarMensagem} /> 
+    
+                        <Box
+                            as="form"
                             styleSheet={{
-                                width: '95%',
-                                border: '0',
-                                resize: 'none',
-                                borderRadius: '5px',
-                                padding: '6px 8px',
-                                backgroundColor: appConfig.theme.colors.neutrals[333],
-                                marginRight: '12px',
-                                color: appConfig.theme.colors.neutrals['000'],
+                                display: 'flex',
+                                alignItems: 'center',
                             }}
-                        />
-                        <Button
-                            onClick={() => handleNovaMensagem(mensagem)}
-                            label=''
-                            fullWidth
-                            styleSheet={{
-                                Width: '50px',
-                                Height: '50px',
-                                borderRadius: '50%',
-                              
-                                backgroundImage : 'url(https://cdn-icons-png.flaticon.com/512/53/53283.png)',
-                                backgroundSize: 'cover'
-                                
-                            }}
-                            buttonColors={{
-                                contrastColor: appConfig.theme.colors.neutrals["000"],
-                                mainColor: appConfig.theme.colors.primary['000'],
-                                mainColorLight: appConfig.theme.colors.primary['000'],
-                                mainColorStrong: appConfig.theme.colors.primary[333],
-                            }}
-                        />
+                        >
+                            <TextField
+                                value={mensagem}
+                                onChange={(event) => {
+                                    const valor = event.target.value;
+                                    setMensagem(valor);
+                                }}
+                                onKeyPress={(event)=>{
+                                    if(event.key === 'Enter'){
+                                        event.preventDefault();
+                                        handleNovaMensagem(mensagem)
+                                    }
+                                }}
+                                placeholder="Insira sua mensagem aqui..."
+                                type="textarea"
+                                styleSheet={{
+                                    width: '95%',
+                                    border: '0',
+                                    resize: 'none',
+                                    borderRadius: '5px',
+                                    padding: '6px 8px',
+                                    backgroundColor: appConfig.theme.colors.neutrals[333],
+                                    marginRight: '12px',
+                                    color: appConfig.theme.colors.neutrals['000'],
+                                }}
+                            />
+                            <Button
+                                onClick={() => handleNovaMensagem(mensagem)}
+                                label=''
+                                fullWidth
+                                styleSheet={{
+                                    Width: '50px',
+                                    Height: '50px',
+                                    borderRadius: '50%',
+                                  
+                                    backgroundImage : 'url(https://cdn-icons-png.flaticon.com/512/53/53283.png)',
+                                    backgroundSize: 'cover'
+                                    
+                                }}
+                                buttonColors={{
+                                    contrastColor: appConfig.theme.colors.neutrals["000"],
+                                    mainColor: appConfig.theme.colors.primary['000'],
+                                    mainColorLight: appConfig.theme.colors.primary['000'],
+                                    mainColorStrong: appConfig.theme.colors.primary[333],
+                                }}
+                            />
+                        </Box>
                     </Box>
                 </Box>
             </Box>
-        </Box>
-    )
-}
-
+        )
+    }
+    
+    }
 function Header() {
     return (
         <>
@@ -230,16 +293,28 @@ function MessageList(props) {
                     styleSheet={{
                         marginBottom: '8px',
                     }}
-                >
-                    <Image
+                >   
+                    <Image 
+                        //onClick = { alert('ola')}
                         styleSheet={{
+                            
                             width: '20px',
                             height: '20px',
                             borderRadius: '50%',
                             display: 'inline-block',
                             marginRight: '8px',
+                            hover: {
+                                transform: 'scale(2.5)',
+                                marginLeft: '20px',
+                                marginRight: '20px'
+                             
+                            }
                         }}
+
                         src={`https://github.com/${mensagem.de}.png`}
+                        
+                    
+                    
                     />
                     <Text tag="strong">
                         {mensagem.de}
@@ -269,7 +344,24 @@ function MessageList(props) {
                                     justifyContent: 'center',
                                     cursor: 'pointer',
                                     backgroundImage: 'url(https://img1.gratispng.com/20180524/pqs/kisspng-red-card-yellow-card-referee-ejection-football-card-5b07697d1ce160.0352049615272124131183.jpg)',
-                                    backgroundSize : 'cover'
+                                    backgroundSize : 'cover',
+                                    hover: {
+                                        transform: 'scale(2.5)',
+                                        marginLeft: '20px',
+                                        marginRight: '20px',
+                                        fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    marginLeft: 'auto',
+                                    color: '#FFF',
+                                    backgroundColor: 'rgba(0,0,0,.5)',
+                                    width: '20px',
+                                    height: '20px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                     
+                                    }
                                 }}
                                 tag="span"
                                 data-id={mensagem.id}
