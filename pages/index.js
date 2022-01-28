@@ -11,7 +11,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 const SUPABASE_URL = 'https://kbufjlbqkvpemmumvtwh.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-
+const teste = 3;
 
 function Titulo(props){
     const Tag = props.tag;
