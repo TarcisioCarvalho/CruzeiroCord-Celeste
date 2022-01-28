@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import PaginaInicial from './index';
 import appConfig from '../config.json';
+import {ButtonSendSticker} from '../src/components/ButtonSendSticker'
 
 
 
@@ -24,6 +25,15 @@ import appConfig from '../config.json';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI5MTM0MywiZXhwIjoxOTU4ODY3MzQzfQ.vXXUcQLCvv82wcsBwl0wezaJC3phiKIM4pQDSYfofEQ'
 const SUPABASE_URL = 'https://kbufjlbqkvpemmumvtwh.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+function escutaMensagensEmTempoReal(adcionaMensagem){
+    return supabaseClient
+    .from('Mensagens')
+    .on('INSERT',(respostaLive)=>{
+            adcionaMensagem(respostaLive.new)
+    })
+    .subscribe()
+}
 
 export default function ChatPage() {
     // Sua lógica vai aqui
@@ -46,6 +56,26 @@ export default function ChatPage() {
             setListaMensagens(data);
             setIsLoaded(true)
         })
+
+        const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
+           // console.log('Nova mensagem:', novaMensagem);
+           // console.log('listaDeMensagens:', listaDeMensagens);
+            // Quero reusar um valor de referencia (objeto/array) 
+            // Passar uma função pro setState
+      
+            // setListaDeMensagens([
+            //     novaMensagem,
+            //     ...listaDeMensagens
+            // ])
+            setListaMensagens((valorAtualDaLista) => {
+              console.log('valorAtualDaLista:', valorAtualDaLista);
+              return [
+                novaMensagem,
+                ...valorAtualDaLista,
+              ]
+            });
+          });
+
     })
 
     function handleNovaMensagem(novaMensagem){
@@ -65,10 +95,10 @@ export default function ChatPage() {
             mensagem
         ])
         .then( ({data}) =>{
-            setListaMensagens([
+           /* setListaMensagens([
                 data[0],
                 ...listaMensagens,
-            ])
+            ])*/
         } )
 
        /* setListaMensagens([
@@ -183,6 +213,12 @@ export default function ChatPage() {
                                 alignItems: 'center',
                             }}
                         >
+                            <ButtonSendSticker
+                            onStickerClick = {(sticker)=>{
+                                handleNovaMensagem(':Sticker:' + sticker)
+                            }}
+                            
+                            />
                             <TextField
                                 value={mensagem}
                                 onChange={(event) => {
@@ -208,6 +244,7 @@ export default function ChatPage() {
                                     color: appConfig.theme.colors.neutrals['000'],
                                 }}
                             />
+                            
                             <Button
                                 onClick={() => handleNovaMensagem(mensagem)}
                                 label=''
@@ -369,7 +406,14 @@ function MessageList(props) {
                             > x </Text>
                             
                 </Box>
-                {mensagem.texto}
+                {mensagem.texto.startsWith(`:Sticker:`)? 
+                 (
+                    <Image src = {mensagem.texto.replace(`:Sticker:`,'')} />
+                ):
+
+                    mensagem.texto
+                }
+                
             </Text>
                 )
             })}
